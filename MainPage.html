@@ -1,0 +1,133 @@
+<!--Date: 2023 03 30-->
+
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+
+        <link rel="stylesheet" href="MainPage.css">
+        <script src="MainPage.js" defer></script>
+        <script src="MainPageData.js" defer></script>
+
+
+    </head>
+
+    <body>
+
+        <section class="parent">
+
+            <section class="left_section">
+
+                <section class="user">
+                    Username: <span id="username"></span>
+                </section>
+
+                <section class ="module">
+                   <span class = "tooltip" title = "
+                    DESCRIPTION
+1) Drag the wanted action modules into the middle section.
+2) User can drag in which order of actions they want and it will execute from the top to bottom sequence.
+3) User click on the action and adjust the desire speed, distance, angle and duration they want.
+4) User press the RUN button when you are ready.
+5) HAVE FUN !!!">
+                       Action modules:</span>
+                    <button id = "forward"    draggable="true"  ondragstart="drag(event)" onclick ="changeProperty(this.id)"> FORWARD</button>
+                    <button id = "backward"   draggable="true"  ondragstart="drag(event)" onclick ="changeProperty(this.id)"> BACKWARD</button>
+                    <button id = "left_turn"  draggable="true"  ondragstart="drag(event)" onclick ="changeProperty(this.id)"> LEFT TURN</button>
+                    <button id = "right_turn" draggable="true"  ondragstart="drag(event)" onclick ="changeProperty(this.id)"> RIGHT TURN</button>
+                    <button id = "sleep"      draggable="true"  ondragstart="drag(event)" onclick ="changeProperty(this.id)"> SLEEP</button>
+                </section>
+
+                <section class ="mode_switch">
+
+                    <span class = "tooltip" title = "
+                     DESCRIPTION
+1) Default settings is the module input mode
+2) Keyboard Input is the mode manually controlling the car
+3) Module Input is the mode for dragging the actions.
+">
+                        Mode switch:</span>
+                    <button class="mode_button" id = "read_module" onclick ="switch_mode(this.id)"> Module Input</button>
+                    <button class="mode_button" id = "read_keyboard" onclick ="switch_mode(this.id)"> Keyboard Input</button>
+                </section>
+
+            </section>
+
+            <section class="mid_section">
+
+                <section class="drop-zone" id="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    Module Execution Board:
+                </section>
+
+                <section class="trash">
+                    <button class="button_trash" onclick = "reset()" >Clear All</button>
+                    <button class="button_trash" onclick = "undo()" >Undo</button>
+                </section>
+
+            </section>
+
+            <section class="right_section">
+
+                <section class="serial" id="serial">
+                    Message:
+                </section>
+
+                <section class="keyboard">
+
+                    <span class = "tooltip" title = "
+                    DESCRIPTION
+1) Use button keys W, A, S and D to manually control the car
+    W: Going Forward
+    A: Going Left
+    S: Going Back
+    D: Going right
+2) Use arrow keys Up, Left, Down and Right to manually control the car
+">
+                        <p>Keyboard:</p></span>
+
+
+                    <div class="section_arrows_1">
+                        <button class = "button_arrow" id="arrow-up">&uarr;</button>
+                    </div>
+                    <div class="section_arrows_2">
+                        <button class = "button_arrow" id="arrow-left">&larr;</button>
+                        <button class = "button_arrow" id="arrow-down">&darr;</button>
+                        <button class = "button_arrow" id="arrow-right">&rarr;</button>
+                    </div>
+                </section>
+
+                <section class="input">
+                    Enter the distance and angle:
+                    <div class="slidecontainer">
+                        <section class="slide">Duration:</section>
+                        <input type="range" min="0" max="10" value="0" class="slider" id="duration_s" disabled="true" oninput="this.nextElementSibling.value = this.value">
+                        <output width="20%" id="duration_o">0</output>
+                    </div>
+                    <div class="slidecontainer">
+                        <section class="slide">Angle:</section>
+                        <input type="range" min="0" max="90" value="0" class="slider" id="angle_s" disabled="true" oninput="this.nextElementSibling.value = this.value">
+                        <output width="20%" id="angle_o">0</output>
+                    </div>
+                    <div class="slidecontainer">
+                        <section class="slide">Speed:</section>
+                        <input type="range" min="0" max="30" value="0" class="slider" id="speed_s" disabled="true" oninput="this.nextElementSibling.value = this.value">
+                        <output width="20%" id="speed_o">0</output>
+                    </div>
+
+                    <button class="button_enter" onclick="enterValue()">Enter</button>
+                </section>
+
+
+                <section class="execution">
+                    <button class="button_execute">End</button>
+                    <button class="button_execute">Pause</button>
+                    <button class="button_execute" onclick="run('')">Run</button>
+                </section>
+
+            </section>
+            </section>
+
+    </body>
+
+</html>

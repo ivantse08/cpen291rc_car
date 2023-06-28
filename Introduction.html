@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MOPICLE</title>
+    <link rel="stylesheet" type="text/css" href="Introduction.css">
+    <script src="Introduction.js"></script>
+
+</head>
+<body>
+<div class="container">
+    <p id="top-left">CPEN291_G19</p>
+    <img src="Images/CAR_SYMBOL.jpg" id="logo">
+  <h1>MOPICLE</h1>
+   <!-- A Textbox to key in user name which have a cap for 20 characters.-->
+  <input type="text" id="username" placeholder="Enter your username" maxlength = "20"
+         onkeydown="if (event.keyCode === 13) startFunction()">
+  <button onclick="startFunction()">Start</button>
+
+     <div id="bottom-right">&copy; 2023 MOPICLE</div>
+     <a href="About.html" id="bottom-left">ABOUT US</a>
+</div>
+</body>
+</html>
