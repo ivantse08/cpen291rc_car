@@ -1,46 +1,15 @@
-/*Date: 2023 04 04*/
+/*Date: 2023 03 30*/
 
-/*Global values:
-    - a boolean which indicates the mode: module_mode = true, allows user to drag modify and run the modules
-                                          module_mode = false, allows user to keyboard control the vehicle
-    - an array of action object, used under module_mode == true, keep track of the modules dragged into middle section
-    - an array but should only contain one action object at a time, used for keyboard controls
-    - a support variable that keeps track of which module's attribute the user wants to modify
-    - an array used to assist keyboard input: i.e. when user presses W, keep putting W into keys, once keys contains
-      16 Ws, send a signal to the server
-    - a string to keep track of which key is being pressed
-    - a time interval used for displaying mesages
-*/
 var module_mode = true;
 
 var actions = [];
 
-var oneAction = [];
-
 var currentSelectedModuleOrder = -1;
 
-var keys = [];
-
-var key = "";
-
-var myInterval = null;
-
-
-//Passing the user name from introduction page
+//passing the user name
 document.addEventListener("DOMContentLoaded", function(event) {
     var params = new URLSearchParams(window.location.search);
     var username = params.get('username');
-
-    user.name = username;
-
-    fetch('/receiver', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(user)
-    })
-
     document.querySelector('#username').textContent = username;
 })
 
@@ -51,7 +20,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 function switch_mode(id) {
     if(id.toString() == "read_module") {
         module_mode = true;
-        keys = [];
     }else {
 
         const list = document.querySelectorAll('[id$="_c"]');
@@ -62,23 +30,7 @@ function switch_mode(id) {
 
         module_mode = false;
         defaultSliders();
-        keys = [];
     }
-
-    let node = document.getElementById(id.toString());
-
-    //makes sure button stays highlighted unless other mode button is clicked
-    node.addEventListener('click', function() {
-        var otherNodes = document.querySelectorAll('.highlight1');
-        otherNodes.forEach(function(otherNode) {
-      if (otherNode !== node && otherNode.classList.contains('highlight1')) {
-        otherNode.classList.remove('highlight1');
-      }
-    });
-        node.classList.add("highlight1");
-    });
-
-
 }
 
 
@@ -89,64 +41,32 @@ function switch_mode(id) {
 //When arrow keys is pressed
 window.addEventListener("keydown", function(event) {
 
-    if(event.keyCode !== 13){
-
-            defaultSliders();
-
-     }
+    defaultSliders();
 
     if(!module_mode) {
         if (event.keyCode === 87 || event.which === 87 || // "W" key
             event.keyCode === 38 || event.which === 38) { // "up" arrow key
-
-            var button = document.getElementById("arrow-up");
-            button.classList.add("pressed");
-            def_forward();
-
-            keys.push("W");
-            if(keys.length >= 16) {
-                run("W");
-                keys = [];
-            }
-
-        } else if (event.keyCode === 65 || event.which === 65 || // "A" key
+          var button = document.getElementById("arrow-up");
+          button.classList.add("pressed");
+          def_forward();
+        }
+        else if (event.keyCode === 65 || event.which === 65 || // "A" key
             event.keyCode === 37 || event.which === 37) { // "left" arrow key
-
-            var button = document.getElementById("arrow-left");
-            button.classList.add("pressed");
-            def_left();
-
-            keys.push("A");
-            if(keys.length >= 16) {
-                run("A");
-                keys = [];
-            }
+          var button = document.getElementById("arrow-left");
+          button.classList.add("pressed");
+          def_left();
         }
         else if (event.keyCode === 68 || event.which === 68 || // "D" key
             event.keyCode === 39 || event.which === 39) { // "right" arrow key
-
-            var button = document.getElementById("arrow-right");
-            button.classList.add("pressed");
-            def_right();
-
-            keys.push("D");
-            if(keys.length >= 16) {
-                run("D");
-                keys = [];
-            }
+          var button = document.getElementById("arrow-right");
+          button.classList.add("pressed");
+          def_right();
         }
         else if (event.keyCode === 83 || event.which === 83 || // "S" key
             event.keyCode === 40 || event.which === 40) { // "down" arrow key
-
-            var button = document.getElementById("arrow-down");
-            button.classList.add("pressed");
-            def_reverse();
-
-            keys.push("S");
-            if(keys.length >= 16) {
-                run("S");
-                keys = [];
-            }
+          var button = document.getElementById("arrow-down");
+          button.classList.add("pressed");
+          def_reverse();
         }
     }
   });
@@ -154,49 +74,31 @@ window.addEventListener("keydown", function(event) {
 //When arrow keys is released
 window.addEventListener("keyup", function(event) {
 
-     if(event.keyCode === 13){
-
-            enterValue();
-
-     }
-
     if(!module_mode) {
 
         if (event.keyCode === 87 || event.which === 87 || // "W" key
             event.keyCode === 38 || event.which === 38) { // "up" arrow key
-            var button = document.getElementById("arrow-up");
-            button.classList.remove("pressed");
-            def_stop();
-            keys = [];
-
-            run("");
+          var button = document.getElementById("arrow-up");
+          button.classList.remove("pressed");
+          def_stop();
         }
         else if (event.keyCode === 65 || event.which === 65 || // "A" key
             event.keyCode === 37 || event.which === 37) { // "left" arrow key
-            var button = document.getElementById("arrow-left");
-            button.classList.remove("pressed");
-            def_stop();
-            keys = [];
-
-            run("");
+          var button = document.getElementById("arrow-left");
+          button.classList.remove("pressed");
+          def_stop();
         }
         else if (event.keyCode === 68 || event.which === 68 || // "D" key
             event.keyCode === 39 || event.which === 39) { // "right" arrow key
-            var button = document.getElementById("arrow-right");
-            button.classList.remove("pressed");
-            def_stop();
-            keys = [];
-
-            run("");
+          var button = document.getElementById("arrow-right");
+          button.classList.remove("pressed");
+          def_stop();
         }
         else if (event.keyCode === 83 || event.which === 83 || // "S" key
             event.keyCode === 40 || event.which === 40) { // "down" arrow key
-            var button = document.getElementById("arrow-down");
-            button.classList.remove("pressed");
-            def_stop();
-            keys = [];
-
-            run("");
+          var button = document.getElementById("arrow-down");
+          button.classList.remove("pressed");
+          def_stop();
         }
 
     }
@@ -208,6 +110,7 @@ window.addEventListener("keyup", function(event) {
 /*For modules drag and drop */
 
 function allowDrop(ev) {
+
     if(module_mode) {
         ev.preventDefault();
         if (ev.target.tagName === 'BUTTON') {
@@ -220,6 +123,7 @@ function allowDrop(ev) {
 }
 
 function drag(ev) {
+
     if(module_mode) {
         ev.dataTransfer.setData("text", ev.target.id);
     }
@@ -232,49 +136,31 @@ function drop(ev) {
         ev.preventDefault();
         var data = ev.dataTransfer.getData("text");
 
-        //Clone the button/node being dragged and add an extensino as #_c to show node being cloned and which
-        //node is it on the board
         let node = document.getElementById(data).cloneNode(true);
 
-        //In the meantime, keep track of the nodes in an array
         putAction(node.id);
 
         let num = actions.length - 1;
+
         node.id = node.id + num.toString() + "_c";
 
-        //Prevent user cloning a node that is already on the board
-        node.draggable = false;
-
-        //Modify the buttons so now they will light up being clicked
         node.addEventListener('click', function() {
             if(module_mode) {
-                var otherNodes = document.querySelectorAll('.highlight');
-                otherNodes.forEach(function(otherNode) {
-                    if (otherNode !== node && otherNode.classList.contains('highlight')) {
-                        otherNode.classList.remove('highlight');
-                    }
-                });
                 node.classList.add("highlight");
             }
         });
+        node.addEventListener("blur", function() {
+            if(module_mode) {
+                node.classList.remove("highlight");
+            }
+        });
 
-        //Once the module is dropped into the middle section, display their default attributes
-        const output = document.createElement("p");
-        let len = node.id.toString().length;
-        if(node.id.toString().substr(0, len - 3) == "forward" || node.id.toString().substr(0, len - 3) == "backward") {
-            const text_node = document.createTextNode("Duration: 1, Speed: 1");
-            output.appendChild(text_node);
-        } else if(node.id.toString().substr(0, len - 3) == "left_turn" || node.id.toString().substr(0, len - 3) == "right_turn") {
-            const text_node = document.createTextNode("Angle: 1, Speed: 1");
-            output.appendChild(text_node);
-        } else if(node.id.toString().substr(0, len - 3) == "sleep") {
-            const text_node = document.createTextNode("Duration: 1")
-            output.appendChild(text_node);
-        }
-        node.appendChild(output);
-
-        //Add the modified node to the board.
         ev.target.appendChild(node);
+
+        let alen = actions.length;
+        for (let i = 0; i < alen; i++) {
+            console.log(actions[i]);
+        }
 
     }
 }
@@ -325,7 +211,6 @@ function reset() {
     }
 }
 
-//removes the last button dragged onto middle section
 function undo() {
 
     if(actions.length != 0 && module_mode) {
@@ -358,6 +243,8 @@ function undo() {
 function changeProperty(id) {
 
     if(module_mode) {
+
+        console.log(id);
 
         let module = id.toString();
 
@@ -409,6 +296,8 @@ function changeProperty(id) {
 }
 
 function openSlider(name, angle, speed, duration) {
+
+    console.log(angle, speed, duration)
 
     //When sliders are opened, move the sliders to the clicked module's property
 
@@ -465,67 +354,27 @@ function openSlider(name, angle, speed, duration) {
 
 }
 
-
-
-
 function enterValue() {
-
-    console.log("Enter value called");
 
     if(module_mode) {
 
-        console.log("Im here")
-
         const alen = actions.length
-
-        const list = document.querySelectorAll('[id$="_c"]');
 
         for (let i = 0; i < alen; i++) {
 
-            console.log("Im here");
-
             if(actions[i].order == currentSelectedModuleOrder) {
-
-                console.log("Im here");
-
-                let attributes = "";
-
-                console.log(actions[i]);
 
                 if(actions[i].hasOwnProperty("angle")){
                     actions[i].angle = parseInt(document.getElementById("angle_o").value);
+                }
 
-                    attributes += "Angle: " + actions[i].angle.toString() + ", ";
+                if(actions[i].hasOwnProperty("speed")){
+                    actions[i].speed = parseInt(document.getElementById("speed_o").value);
                 }
 
                 if(actions[i].hasOwnProperty("duration")){
                     actions[i].duration = parseInt(document.getElementById("duration_o").value);
-
-                    attributes = "Duration: " + actions[i].duration.toString() + ", ";
                 }
-
-                 if(actions[i].hasOwnProperty("speed")){
-                    actions[i].speed = parseInt(document.getElementById("speed_o").value);
-
-                    attributes += "Speed: " + actions[i].speed.toString() + ", ";
-                }
-
-                console.log("Im here");
-
-                //Change the text display for the button
-                let len = attributes.length;
-
-                attributes = attributes.substr(0, len - 2);
-
-                list[i].removeChild(list[i].lastChild);
-
-                const output = document.createElement("p");
-
-                const text_node = document.createTextNode(attributes);
-
-                output.appendChild(text_node);
-
-                list[i].appendChild(output);
 
                 /* Set slider back to default after entering value*/
                 defaultSliders();
@@ -538,14 +387,11 @@ function enterValue() {
 }
 
 
-/* Functions for uploading module data to the server*/
+/* Functions for uploading module data to the server
+*/
 
-function run(key) {
+function run() {
     if(module_mode) {
-
-        actions.unshift(sent);
-
-        sent.sentTime += 1;
 
         console.log(JSON.stringify(actions));
 
@@ -557,77 +403,22 @@ function run(key) {
             body: JSON.stringify(actions)
         })
 
-        actions.shift();
-
-        const message = document.getElementById("serial");
-
-        myInterval = setInterval(running, 2000);
-
-    }
-    else {
-
-        let action = null;
-
-        if(key == "W") {
-            action = JSON.parse(JSON.stringify(forward));
-            action.speed = 15;
-            action.duration = 1;
-        } else if(key == "A") {
-            action = JSON.parse(JSON.stringify(left_turn));
-            action.speed = 15;
-            action.angle = 10;
-        } else if(key == "D") {
-            action = JSON.parse(JSON.stringify(right_turn));
-            action.speed = 15;
-            action.angle = 10;
-        } else if(key == "S") {
-            action = JSON.parse(JSON.stringify(backward));
-            action.speed = 15;
-            action.duration = 1;
-        } else {
-            action = JSON.parse(JSON.stringify(sleep));
-        }
-
-        input.keyboard = key;
-
-        oneAction.push(input);
-
-        oneAction.push(action);
-
-        console.log(JSON.stringify(oneAction));
-
-        fetch('/receiver', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(oneAction)
+        .then(response => response.json())
+        .then(data => {
+          console.log('POST request succeeded with JSON response:', data);
+          // Send a GET request after the POST request is successful
+          fetch('/receiver')
+          .then(response => response.json())
+          .then(data => console.log('GET request succeeded with JSON response:', data))
+          .catch(error => console.error('Error fetching GET request:', error));
         })
-
-        oneAction = [];
-
+        .catch(error => console.error('Error fetching POST request:', error));
     }
 }
 
-function running() {
-                const message = document.getElementById("serial");
 
-                message.innerHTML += "<br>";
-                message.innerHTML += "running...";
 
-                fetch('/finished')
-                .then(response => response.text())
-                .then(data => {
 
-                    const finishedData = parseInt(data);
-
-                    if(finishedData == 0) {
-                        message.innerHTML += "<br>";
-                        message.innerHTML += "Finished!";
-                        clearInterval(myInterval);
-                    }
-                });
-}
 
 
 
@@ -666,3 +457,5 @@ function defaultSliders() {
     document.getElementById("angle_o").value = 0;
 
 }
+
+
